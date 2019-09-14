@@ -16,6 +16,9 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class Facture {
 
@@ -64,6 +67,17 @@ public class Facture {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+	
+	    InputStream inputStream ;
+ 		Properties prop = new Properties();
+ 		String propFileName = "config.properties";
+ 		inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
+ 		try {
+ 			prop.load(inputStream);
+ 		} catch (IOException e1) {
+ 			e1.printStackTrace();
+ 		}
+ 		
 		frame = new JFrame();
 		frame.setResizable(false);
 		frame.getContentPane().setBackground(Color.LIGHT_GRAY);
@@ -165,9 +179,10 @@ public class Facture {
 	            {
 	                Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
-	                String userName = "sa";
-	                String password = "jocker@1995";
-	                String url = "jdbc:sqlserver://192.168.0.10:1433"+";databaseName=BanqueApp";
+	                String userName = prop.getProperty("userName");
+        			String password = prop.getProperty("password");
+        			String url = prop.getProperty("url");
+        			
 	                Connection con = DriverManager.getConnection(url, userName, password);
 	                Statement s1 = con.createStatement();
 	                
@@ -193,17 +208,8 @@ public class Facture {
 	                //execute the request
 	                
 	                s1.executeUpdate(sql);
-	                
-	                /*NomFournisseur.setEditable(false);
-	                No_facture.setEditable(false);
-	                contrat.setEditable(false);
-	                Date_facture.setEditable(false);
-	                periode.setEditable(false);
-	                objet.setEditable(false);
-	                Total.setEditable(false);
-	                type.setEditable(false);
-	                Date_remise.setEditable(false);*/
 	                frame.setVisible(false);
+	                Facture.main(null);
 	                Inserted.main(null);
 	            } catch (Exception e)
 	            {

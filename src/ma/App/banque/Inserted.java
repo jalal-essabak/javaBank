@@ -12,6 +12,10 @@ import java.awt.event.ActionEvent;
 
 public class Inserted {
 
+	public JFrame getFrame() {
+		return frame;
+	}
+
 	private JFrame frame;
 
 	/**

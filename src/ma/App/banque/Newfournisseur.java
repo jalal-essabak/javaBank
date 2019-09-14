@@ -11,9 +11,12 @@ import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.util.Properties;
 import java.awt.event.ActionEvent;
 
 public class Newfournisseur {
@@ -49,6 +52,17 @@ public class Newfournisseur {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
+		InputStream inputStream ;
+ 		Properties prop = new Properties();
+ 		String propFileName = "config.properties";
+ 		inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
+ 		try {
+ 			prop.load(inputStream);
+ 		} catch (IOException e1) {
+ 			e1.printStackTrace();
+ 		}
+		
 		frame = new JFrame();
 		frame.getContentPane().setBackground(Color.WHITE);
 		frame.getContentPane().setLayout(null);
@@ -89,10 +103,11 @@ public class Newfournisseur {
 				try
 	            {
 	                Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-
-	                String userName = "sa";
-	                String password = "jocker@1995";
-	                String url = "jdbc:sqlserver://192.168.0.10:1433"+";databaseName=BanqueApp";
+	                                    
+	        		String userName = prop.getProperty("userName");
+        			String password = prop.getProperty("password");
+        			String url = prop.getProperty("url");
+        			
 	                Connection con = DriverManager.getConnection(url, userName, password);
 	                Statement s1 = con.createStatement();
 	                
@@ -110,6 +125,7 @@ public class Newfournisseur {
 	                	               
 	                frame.setVisible(false);
 	                Inserted.main(null);
+	                Newfournisseur.main(null);
 	            } catch (Exception e)
 	            {
 	                e.printStackTrace();
@@ -122,6 +138,6 @@ public class Newfournisseur {
 		btnAjouter.setBounds(133, 264, 170, 35);
 		frame.getContentPane().add(btnAjouter);
 		frame.setBounds(100, 100, 450, 387);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 }

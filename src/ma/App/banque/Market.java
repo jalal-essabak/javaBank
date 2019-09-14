@@ -17,10 +17,14 @@ import javax.swing.ImageIcon;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Properties;
+
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
@@ -66,6 +70,17 @@ public class Market {
 	 */
 	
 	private void initialize() {
+		
+		//configuration file loading
+		InputStream inputStream ;
+ 		Properties prop = new Properties();
+ 		String propFileName = "config.properties";
+ 		inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
+ 		try {
+ 			prop.load(inputStream);
+ 		} catch (IOException e1) {
+ 			e1.printStackTrace();
+ 		}
 		
 		//suppliers table 
 		
@@ -275,6 +290,11 @@ public class Market {
 		panel_5.add(lblNewLabel_1);
 		
 		JButton btnNewButton_2 = new JButton("ajouter fournisseur");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Newfournisseur.main(null);
+			}
+		});
 		btnNewButton_2.setBackground(SystemColor.desktop);
 		btnNewButton_2.setForeground(SystemColor.text);
 		btnNewButton_2.setBounds(28, 392, 244, 25);
@@ -345,9 +365,10 @@ public class Market {
 						try {
 							Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
-					        String userName = "sa";
-					        String password = "jocker@1995";
-					        String url = "jdbc:sqlserver://192.168.0.10:1433"+";databaseName=BanqueApp";
+							String userName = prop.getProperty("userName");
+		        			String password = prop.getProperty("password");
+		        			String url = prop.getProperty("url");
+		        			
 					        Connection con = DriverManager.getConnection(url, userName, password);
 					        Statement s1 = con.createStatement();			        
 					        String name = textField.getText();
@@ -355,10 +376,20 @@ public class Market {
 							String sql = "select nom from fournisseurs where serie='"+marche+"';";
 							ResultSet rs =  s1.executeQuery(sql);
 							int j=0;
-								while(rs.next()) {								
+							/*if(rs.next()!=true) {
+								lblLeNom.setVisible(true);
+							} else {
+								while(rs.next()) {
+									donne[j][0]=rs.getString(1);
+									j++;
+								}
+								panel.setVisible(false);
+								panel_3.setVisible(true);
+							}*/
+							while(rs.next()) {								
 										donne[j][0]=rs.getString(1);
 										j++;
-								}
+							}
 								panel.setVisible(false);
 								panel_3.setVisible(true);
 							}catch(Exception e) {
@@ -404,9 +435,11 @@ public class Market {
 						
 						try {					
 							Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-					        String userName = "sa";
-					        String password = "jocker@1995";
-					        String url = "jdbc:sqlserver://192.168.0.10:1433"+";databaseName=BanqueApp";
+							
+							String userName = prop.getProperty("userName");
+		        			String password = prop.getProperty("password");
+		        			String url = prop.getProperty("url");
+		        			
 					        Connection con = DriverManager.getConnection(url, userName, password);
 					        Statement s1 = con.createStatement();
 					        String name = textField.getText();
@@ -439,10 +472,12 @@ public class Market {
 				
 				table = new JTable(data,column);
 				scrollPane.setViewportView(table);
+				table.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
 				
 				//button add bill
 				btnAjouterFacture.addActionListener(new ActionListener() {
 				        			public void actionPerformed(ActionEvent arg0) {
+				        				frame.setVisible(true);
 				        				Facture.main(null);
 				        			};
 						});
@@ -455,9 +490,10 @@ public class Market {
 					            {
 					                Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
-					                String userName = "sa";
-					                String password = "jocker@1995";
-					                String url = "jdbc:sqlserver://192.168.0.10:1433"+";databaseName=BanqueApp";
+					                String userName = prop.getProperty("userName");
+				        			String password = prop.getProperty("password");
+				        			String url = prop.getProperty("url");
+				        			
 					                Connection con = DriverManager.getConnection(url, userName, password);
 					                Statement s1 = con.createStatement();
 					                String marche = textField.getText();
@@ -490,7 +526,7 @@ public class Market {
 				//button add a clause
 				btnAjouter.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent arg0) {
-								frame.setVisible(false);
+								frame.setVisible(true);
 								Clause.main(null);
 							}
 						});
